@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Voting OSIS | SMA IT Seribu Bulan</title>
+
+<style>
+:root{
+    --navy:#123b68;
+    --blue:#1d67a8;
+    --cyan:#10bfc1;
+    --cyan-dark:#079b9d;
+    --orange:#f28a24;
+    --gold:#e8bb4d;
+    --bg:#f3f7fa;
+    --card:#fff;
+    --text:#172033;
+    --muted:#718096;
+    --border:#e1e8ef;
+    --danger:#dc3545;
+    --success:#198754;
+    --shadow:0 10px 30px rgba(18,59,104,.08);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,Helvetica,sans-serif}
+body{background:var(--bg);color:var(--text)}
+button,input,textarea{font:inherit}
+
+.sidebar{
+    position:fixed;inset:0 auto 0 0;width:270px;
+    background:linear-gradient(180deg,#0b3158,#123b68 60%,#0d2f52);
+    color:#fff;z-index:100;padding:20px 15px;
+    overflow-y:auto;
+}
+.brand{text-align:center;padding:4px 8px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
+.logo-wrap{
+    width:220px;aspect-ratio:1277/731;margin:0 auto 12px;border-radius:0;
+    background:transparent;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;box-shadow:none;
+}
+.logo-wrap img{width:100%;height:100%;object-fit:contain}
+.brand h2{font-size:16px;line-height:1.35}
+.brand p{font-size:10px;color:#c9d9e8;margin-top:4px;letter-spacing:1px}
+
+.menu{margin-top:20px}
+.menu-title{
+    color:#8fb3d2;font-size:10px;font-weight:800;
+    letter-spacing:1.4px;padding:0 13px 9px;
+}
+.menu button{
+    width:100%;border:0;background:transparent;color:#dce8f4;
+    text-align:left;padding:13px 14px;border-radius:11px;cursor:pointer;
+    margin-bottom:5px;font-size:13px;font-weight:700;transition:.2s;
+}
+.menu button:hover,.menu button.active{background:rgba(16,191,193,.18);color:#fff}
+.menu-icon{width:25px;display:inline-block;color:#73e1df;font-weight:900}
+
+.main{margin-left:270px;min-height:100vh}
+.topbar{
+    height:70px;background:#fff;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 32px;position:sticky;top:0;z-index:50;
+}
+.page-title{font-size:19px;font-weight:900;color:var(--navy)}
+.top-status{
+    display:flex;align-items:center;gap:8px;background:#effafa;
+    color:#087e80;padding:8px 13px;border-radius:20px;font-size:11px;font-weight:800;
+}
+.dot{width:7px;height:7px;background:var(--cyan);border-radius:50%}
+.content{padding:32px;max-width:1450px;margin:auto}
+.page{display:none}.page.active{display:block}
+
+.hero{
+    background:
+      radial-gradient(circle at 92% 12%,rgba(16,191,193,.25),transparent 24%),
+      linear-gradient(135deg,#0e355b,#155b91 65%,#087e80);
+    color:#fff;padding:42px;border-radius:24px;margin-bottom:24px;
+    position:relative;overflow:hidden;
+}
+.hero:before{
+    content:"";position:absolute;width:300px;height:300px;border:1px solid rgba(255,255,255,.12);
+    border-radius:50%;right:-130px;bottom:-170px;
+}
+.hero-logo{
+    width:150px;aspect-ratio:1277/731;border-radius:0;background:transparent;padding:0;
+    margin-bottom:18px;box-shadow:none;
+}
+.hero-logo img{width:100%;height:100%;object-fit:contain}
+.hero h1{font-size:32px;line-height:1.2;margin-bottom:8px}
+.hero p{color:#dcebf7;max-width:760px;line-height:1.65}
+.period{
+    display:inline-block;margin-top:18px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.16);padding:8px 13px;border-radius:20px;
+    font-size:11px;font-weight:800;letter-spacing:.5px;
+}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat-card{
+    background:#fff;border:1px solid var(--border);border-radius:17px;padding:21px;
+    box-shadow:0 3px 15px rgba(0,0,0,.025);position:relative;overflow:hidden;
+}
+.stat-card:after{content:"";position:absolute;right:0;top:0;width:5px;height:100%;background:var(--cyan)}
+.stat-card .label{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.8px}
+.stat-card .value{font-size:29px;font-weight:900;color:var(--navy);margin-top:8px}
+.stat-card .small{font-size:11px;color:var(--muted);margin-top:4px}
+
+.dashboard-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}
+.panel,.admin-card,.voter-box{
+    background:#fff;border:1px solid var(--border);border-radius:18px;padding:23px;box-shadow:var(--shadow)
+}
+.panel-title,.section-head{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.panel-title{margin-bottom:18px}.panel-title h3,.section-head h2{color:var(--navy)}
+.section-head{margin-bottom:23px}.section-head p{font-size:12px;color:var(--muted);margin-top:5px}
+
+.quick-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.quick-btn{
+    border:1px solid var(--border);background:#f8fbfd;border-radius:12px;
+    padding:17px;text-align:left;cursor:pointer;font-weight:800;color:var(--navy);
+}
+.quick-btn:hover{border-color:#a9dddd;background:#effafa}
+
+.btn{
+    border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font-size:12px;font-weight:800;
+    transition:.2s
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--blue)}
+.btn-cyan{background:var(--cyan);color:#073d3e}.btn-gold{background:var(--gold);color:#172033}
+.btn-danger{background:#fee2e2;color:#b42318}.btn-success{background:#dcfce7;color:#166534}
+.btn-secondary{background:#edf1f5;color:#455363}
+
+.candidate-grid,.voting-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:19px}
+.candidate-card,.vote-card{
+    background:#fff;border:1px solid var(--border);border-radius:19px;overflow:hidden;
+    box-shadow:0 6px 22px rgba(0,0,0,.045);transition:.2s
+}
+.candidate-card:hover,.vote-card:hover{transform:translateY(-3px);box-shadow:0 13px 30px rgba(18,59,104,.1)}
+.candidate-header,.vote-head{
+    background:linear-gradient(135deg,#103a65,#17679c);color:#fff;text-align:center;padding:23px
+}
+.nomor{
+    width:60px;height:60px;border-radius:50%;margin:auto;display:flex;align-items:center;justify-content:center;
+    background:var(--gold);color:#172b43;font-size:21px;font-weight:900;
+    box-shadow:0 6px 15px rgba(0,0,0,.12)
+}
+.candidate-header h3,.vote-head h3{font-size:11px;letter-spacing:1.3px;margin-top:12px}
+.candidate-body,.vote-body{padding:21px}
+.label-small{font-size:9px;color:var(--muted);font-weight:900;letter-spacing:1px;margin-top:9px}
+.candidate-name{font-size:17px;color:var(--navy);font-weight:900;margin-top:4px}
+.amp{text-align:center;color:var(--orange);font-weight:900;margin:9px 0}
+.candidate-info{margin-top:16px}.candidate-info strong{font-size:11px;color:var(--navy)}
+.candidate-info p{font-size:12px;color:var(--muted);line-height:1.6;margin-top:5px}
+.card-actions{display:flex;gap:8px;margin-top:19px}.card-actions .btn{flex:1}
+
+.voting-intro{
+    background:linear-gradient(135deg,#0e355b,#087e80);color:#fff;border-radius:20px;padding:30px;margin-bottom:20px
+}
+.voting-intro h2{font-size:27px}.voting-intro p{color:#d9eff0;font-size:13px;margin-top:7px;line-height:1.6}
+.voter-box{max-width:760px;margin-bottom:25px}
+.voter-box h3{color:var(--navy);margin-bottom:16px}
+.voter-form,.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:14px}.form-group.full{grid-column:1/-1}
+.form-group label{display:block;font-size:11px;font-weight:800;color:#334155;margin-bottom:6px}
+.form-group input,.form-group textarea{
+    width:100%;border:1px solid var(--border);border-radius:10px;padding:12px;outline:none;font-size:13px
+}
+.form-group textarea{min-height:95px;resize:vertical}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(16,191,193,.1)}
+.vote-body{text-align:center}.vote-body h3{color:var(--navy);font-size:17px}
+.vote-body .wakil{color:var(--muted);font-size:13px;margin-top:6px}
+.vote-btn{width:100%;margin-top:19px;border:0;background:var(--navy);color:#fff;border-radius:10px;padding:13px;font-weight:900;cursor:pointer}
+.vote-btn:hover{background:var(--blue)}
+
+.result-list{display:flex;flex-direction:column;gap:14px}
+.result-card{background:#fff;border:1px solid var(--border);border-radius:17px;padding:21px}
+.result-card.winner{border:2px solid var(--gold)}
+.result-top{display:flex;justify-content:space-between;align-items:center}
+.rank{display:inline-block;background:#edfafa;color:#087e80;padding:5px 8px;border-radius:7px;font-size:10px;font-weight:900;margin-bottom:7px}
+.result-title{color:var(--navy);font-weight:900}.result-names{color:var(--muted);font-size:12px;margin-top:4px}
+.result-score{text-align:right}.result-score strong{font-size:23px;color:var(--navy)}.result-score span{display:block;color:var(--muted);font-size:10px}
+.progress{height:11px;background:#e8edf2;border-radius:20px;overflow:hidden;margin-top:14px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#123b68,#10bfc1);border-radius:20px;transition:1s}
+
+.table-wrap{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{padding:13px 15px;text-align:left;border-bottom:1px solid var(--border);font-size:12px}
+th{background:#f7fafc;color:var(--navy);font-size:10px;letter-spacing:.6px}td{color:#526174}
+
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.admin-card h3{color:var(--navy);margin-bottom:7px}.admin-card p{color:var(--muted);font-size:12px;line-height:1.6;margin-bottom:18px}
+
+.modal{
+    display:none;position:fixed;inset:0;background:rgba(7,24,41,.62);z-index:1000;
+    align-items:center;justify-content:center;padding:20px
+}
+.modal.show{display:flex}
+.modal-box{background:#fff;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;border-radius:20px;padding:29px}
+.modal-box h2{color:var(--navy);margin-bottom:20px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+
+.mobile-menu{display:none;border:0;background:transparent;font-size:23px;cursor:pointer;color:var(--navy)}
+
+@media(max-width:1100px){
+    .candidate-grid,.voting-cards{grid-template-columns:1fr 1fr}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .dashboard-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+    .sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:translateX(0)}
+    .main{margin-left:0}.mobile-menu{display:block}.topbar{padding:0 17px}
+    .content{padding:20px 14px}.hero{padding:28px 22px}.hero h1{font-size:25px}
+    .candidate-grid,.voting-cards,.stats-grid,.admin-grid,.voter-form,.form-grid{grid-template-columns:1fr}
+    .form-group.full{grid-column:auto}.section-head{align-items:flex-start}.section-head .btn{white-space:nowrap}
+    .top-status{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar" id="sidebar">
+    <div class="brand">
+        <div class="logo-wrap">
+            <img src="Logo SMA IT SB Transfaran.png" alt="Logo SMA IT Seribu Bulan">
+        </div>
+        <h2>SMA IT SERIBU BULAN</h2>
+        <p>BOARDING SCHOOL</p>
+    </div>
+
+    <div class="menu">
+        <div class="menu-title">MENU UTAMA</div>
+
+        <button class="active" onclick="showPage('dashboard',this)">
+            <span class="menu-icon">⌂</span> Dashboard
+        </button>
+
+        <button onclick="showPage('candidates',this)">
+            <span class="menu-icon">♙</span> Calon Paslon
+        </button>
+
+        <button onclick="showPage('voting',this)">
+            <span class="menu-icon">✓</span> Pemilihan
+        </button>
+
+        <button onclick="showPage('results',this)">
+            <span class="menu-icon">▥</span> Hasil Suara
+        </button>
+
+        <button onclick="showPage('voters',this)">
+            <span class="menu-icon">♟</span> Data Pemilih
+        </button>
+
+        <div class="menu-title" style="margin-top:18px">PENGELOLAAN</div>
+
+        <button onclick="showPage('admin',this)">
+            <span class="menu-icon">⚙</span> Admin
+        </button>
+    </div>
+</aside>
+
+<main class="main">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:14px">
+            <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+            <div class="page-title" id="pageTitle">Dashboard</div>
+        </div>
+        <div class="top-status"><span class="dot"></span> SISTEM E-VOTING OSIS</div>
+    </header>
+
+    <div class="content">
+
+        <section class="page active" id="dashboard">
+            <div class="hero">
+                <div class="hero-logo"><img src="Logo SMA IT SB Transfaran.png" alt="Logo sekolah"></div>
+                <h1>Pemilihan Ketua & Wakil OSIS</h1>
+                <p>
+                    Sistem E-Voting OSIS SMA IT Seribu Bulan Boarding School.
+                    Tentukan pasangan pemimpin OSIS pilihanmu secara mudah, tertib, dan transparan.
+                </p>
+                <span class="period">PERIODE 2026 / 2027</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">Jumlah Paslon</div>
+                    <div class="value" id="dashCandidates">0</div>
+                    <div class="small">Pasangan calon terdaftar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Suara</div>
+                    <div class="value" id="dashVotes">0</div>
+                    <div class="small">Suara masuk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Pemilih</div>
+                    <div class="value" id="dashVoters">0</div>
+                    <div class="small">Sudah memilih</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Partisipasi</div>
+                    <div class="value" id="dashParticipation">0%</div>
+                    <div class="small">Berdasarkan pemilih tercatat</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="panel">
+                    <div class="panel-title">
+                        <h3>Perolehan Suara Sementara</h3>
+                        <button class="btn btn-secondary" onclick="showPage('results')">Lihat Semua</button>
+                    </div>
+                    <div id="dashboardResults"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title"><h3>Akses Cepat</h3></div>
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="openCandidateModal()">＋<br>Tambah Paslon</button>
+                        <button class="quick-btn" onclick="showPage('voting')">✓<br>Mulai Voting</button>
+                        <button class="quick-btn" onclick="showPage('results')">▥<br>Hasil Suara</button>
+                        <button class="quick-btn" onclick="exportCSV()">↓<br>Export Hasil</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page" id="candidates">
+            <div class="section-head">
+                <div>
+                    <h2>Calon Paslon</h2>
+                    <p>Tambahkan dan kelola pasangan Ketua & Wakil OSIS.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openCandidateModal()">＋ Tambah Paslon</button>
+            </div>
+            <div class="candidate-grid" id="candidateAdminContainer"></div>
+        </section>
+
+        <section class="page" id="voting">
+            <div class="voting-intro">
+                <h2>🗳️ Gunakan Hak Suara Anda</h2>
+                <p>Pilih satu pasangan Ketua & Wakil OSIS. Pastikan pilihan sudah benar sebelum dikonfirmasi.</p>
+            </div>
+
+            <div class="voter-box">
+                <h3>Identitas Pemilih</h3>
+                <div class="voter-form">
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="voterName" placeholder="Masukkan nama lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label>NIS</label>
+                        <input type="text" id="voterNis" placeholder="Masukkan NIS">
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="checkVoter()">Tampilkan Paslon</button>
+            </div>
+
+            <div id="votingArea" style="display:none">
+                <div class="section-head">
+                    <div><h2>Pilih Pasangan Calon</h2><p>Satu NIS hanya dapat memberikan satu suara pada sistem ini.</p></div>
+                </div>
+                <div class="voting-cards" id="votingContainer"></div>
+            </div>
+        </section>
+
+        <section class="page" id="results">
+            <div class="section-head">
+                <div><h2>Hasil Perolehan Suara</h2><p>Rekapitulasi hasil pemilihan OSIS.</p></div>
+                <button class="btn btn-success" onclick="exportCSV()">↓ Export CSV</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><div class="label">Total Suara</div><div class="value" id="resultTotal">0</div></div>
+                <div class="stat-card"><div class="label">Paslon</div><div class="value" id="resultCandidates">0</div></div>
+                <div class="stat-card"><div class="label">Suara Tertinggi</div><div class="value" id="resultHighest">0</div></div>
+                <div class="stat-card"><div class="label">Pemilih</div><div class="value" id="resultParticipation">0</div></div>
+            </div>
+            <div class="result-list" id="resultContainer"></div>
+        </section>
+
+        <section class="page" id="voters">
+            <div class="section-head">
+                <div><h2>Data Pemilih</h2><p>Daftar pemilih yang telah menggunakan hak suara.</p></div>
+                <button class="btn btn-success" onclick="exportVotersCSV()">↓ Export Pemilih</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>No</th><th>Nama</th><th>NIS</th><th>Paslon</th><th>Waktu Voting</th></tr>
+                    </thead>
+                    <tbody id="voterTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="page" id="admin">
+            <div class="section-head">
+                <div><h2>Pengaturan Admin</h2><p>Kelola data dan keamanan sistem voting.</p></div>
+            </div>
+
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3>Login Admin</h3>
+                    <p>Masukkan password untuk membuka fungsi pengelolaan data.</p>
+                    <div class="form-group">
+                        <label>Password Admin</label>
+                        <input type="password" id="adminPassword" placeholder="Password admin">
+                    </div>
+                    <button class="btn btn-primary" onclick="adminLogin()">Masuk Admin</button>
+                    <div id="adminStatus" style="margin-top:13px"></div>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Reset Data Voting</h3>
+                    <p>Menghapus seluruh suara dan data pemilih dari browser ini.</p>
+                    <button class="btn btn-danger" onclick="resetAllData()">Reset Semua Data</button>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Export Data</h3>
+                    <p>Simpan hasil pemilihan dan data pemilih sebagai CSV.</p>
+                    <button class="btn btn-success" onclick="exportCSV()">Export Hasil</button>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Informasi Sistem</h3>
+                    <p>
+                        Versi ini menggunakan localStorage sehingga cocok untuk demo atau satu perangkat.
+                        Untuk pemilihan dari banyak HP/komputer, hubungkan sistem ke Firebase/database online.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<div class="modal" id="candidateModal">
+    <div class="modal-box">
+        <h2 id="candidateModalTitle">Tambah Pasangan Calon</h2>
+        <input type="hidden" id="editCandidateId">
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nomor Paslon</label>
+                <input type="text" id="candidateNumber" placeholder="Contoh: 01">
+            </div>
+            <div class="form-group">
+                <label>Nama Ketua</label>
+                <input type="text" id="candidateKetua" placeholder="Nama calon ketua">
+            </div>
+            <div class="form-group full">
+                <label>Nama Wakil</label>
+                <input type="text" id="candidateWakil" placeholder="Nama calon wakil">
+            </div>
+            <div class="form-group full">
+                <label>Visi</label>
+                <textarea id="candidateVisi" placeholder="Masukkan visi pasangan calon"></textarea>
+            </div>
+            <div class="form-group full">
+                <label>Misi</label>
+                <textarea id="candidateMisi" placeholder="Pisahkan setiap misi dengan tanda titik koma (;), contoh: Misi pertama; Misi kedua; Misi ketiga"></textarea>
+            </div>
+            <div class="form-group full">
+                <label>Program Unggulan</label>
+                <textarea id="candidateProgram" placeholder="Masukkan program unggulan"></textarea>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeCandidateModal()">Batal</button>
+            <button class="btn btn-primary" onclick="saveCandidate()">Simpan Paslon</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="voteModal">
+    <div class="modal-box" style="max-width:450px;text-align:center">
+        <div style="width:64px;height:64px;background:#fff5d9;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;font-size:28px">!</div>
+        <h2 style="margin-top:17px">Konfirmasi Pilihan</h2>
+        <p style="color:var(--muted);font-size:13px">Anda akan memilih:</p>
+        <div id="confirmPaslon" style="color:var(--navy);font-size:20px;font-weight:900;margin:15px 0"></div>
+        <p style="color:var(--danger);font-size:11px">Pilihan yang sudah dikirim tidak dapat diubah.</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeVoteModal()">Batal</button>
+            <button class="btn btn-primary" onclick="submitVote()">Ya, Saya Pilih</button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBe0ajVqgLh4bfrG023ARA8bOZ0oeBRxCM",
+    authDomain: "votingsma.firebaseapp.com",
+    projectId: "votingsma",
+    storageBucket: "votingsma.firebasestorage.app",
+    messagingSenderId: "2333604059",
+    appId: "1:2333604059:web:56090791d36499603574fe",
+    measurementId: "G-14T1KFRKK2"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const defaultCandidates = [
+    {
+        number:"01", ketua:"Ahmad Fauzan", wakil:"Muhammad Fajar",
+        visi:"Mewujudkan OSIS yang aktif, disiplin, kreatif, religius, dan menjadi wadah aspirasi siswa.",
+        misi:["Meningkatkan kedisiplinan siswa","Mengembangkan kegiatan kreatif","Meningkatkan solidaritas siswa","Membangun komunikasi yang baik"],
+        program:"Pengembangan karakter, olahraga, kreativitas siswa dan kegiatan sosial.", votes:0
+    },
+    {
+        number:"02", ketua:"Rizky Ramadhan", wakil:"Ilham Maulana",
+        visi:"Menciptakan OSIS yang inovatif, komunikatif, bertanggung jawab dan berprestasi.",
+        misi:["Membuka ruang aspirasi siswa","Mendorong siswa berprestasi","Mengadakan kegiatan edukatif","Membangun budaya kerja sama"],
+        program:"Program aspirasi siswa, kompetisi akademik dan kegiatan kebersamaan.", votes:0
+    },
+    {
+        number:"03", ketua:"Dimas Alfarizi", wakil:"Farhan Akbar",
+        visi:"Membangun OSIS yang berintegritas, solid, aktif dan memberikan manfaat bagi seluruh warga sekolah.",
+        misi:["Meningkatkan kekompakan siswa","Mendukung kegiatan sekolah","Mengembangkan bakat dan minat","Menumbuhkan sikap bertanggung jawab"],
+        program:"Pengembangan bakat, kegiatan keagamaan, olahraga, sosial dan kreativitas.", votes:0
+    }
+];
+
+let candidates = [];
+let voters = [];
+let currentVoter = null;
+let selectedCandidate = null;
+let adminLogged = false;
+let unsubscribeCandidates = null;
+let unsubscribeVoters = null;
+
+const pageNames = {
+    dashboard:"Dashboard", candidates:"Calon Paslon", voting:"Pemilihan",
+    results:"Hasil Suara", voters:"Data Pemilih", admin:"Admin"
+};
+
+function showPage(page,button=null){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(page).classList.add("active");
+    document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+
+    if(button) button.classList.add("active");
+    else document.querySelectorAll(".menu button").forEach(b=>{
+        if(b.textContent.toLowerCase().includes(pageNames[page].toLowerCase())) b.classList.add("active");
+    });
+
+    document.getElementById("pageTitle").textContent=pageNames[page];
+
+    if(page==="dashboard") renderDashboard();
+    if(page==="candidates") renderAdminCandidates();
+    if(page==="voting") renderVoting();
+    if(page==="results") renderResults();
+    if(page==="voters") renderVoters();
+
+    document.getElementById("sidebar").classList.remove("open");
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("open");
+}
+
+async function seedCandidatesIfEmpty(){
+    const snap = await db.collection("candidates").limit(1).get();
+    if(!snap.empty) return;
+
+    const batch = db.batch();
+    defaultCandidates.forEach(c=>{
+        const ref = db.collection("candidates").doc();
+        batch.set(ref,{
+            ...c,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    });
+    await batch.commit();
+}
+
+function listenCandidates(){
+    if(unsubscribeCandidates) unsubscribeCandidates();
+
+    unsubscribeCandidates = db.collection("candidates")
+        .orderBy("number")
+        .onSnapshot(snapshot=>{
+            candidates = snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
+            renderAll();
+        }, error=>{
+            console.error(error);
+            alert("Gagal membaca data paslon dari Firebase. Pastikan Firestore sudah dibuat dan Rules mengizinkan akses.");
+        });
+}
+
+function listenVoters(){
+    if(unsubscribeVoters) unsubscribeVoters();
+
+    unsubscribeVoters = db.collection("voters")
+        .orderBy("createdAt","desc")
+        .onSnapshot(snapshot=>{
+            voters = snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
+            renderAll();
+        }, error=>{
+            console.error(error);
+            alert("Gagal membaca data pemilih dari Firebase.");
+        });
+}
+
+function renderAll(){
+    renderDashboard();
+    renderAdminCandidates();
+    renderVoting();
+    renderResults();
+    renderVoters();
+}
+
+function renderDashboard(){
+    const total=candidates.reduce((s,c)=>s+Number(c.votes||0),0);
+    const voterCount=voters.length;
+
+    document.getElementById("dashCandidates").textContent=candidates.length;
+    document.getElementById("dashVotes").textContent=total;
+    document.getElementById("dashVoters").textContent=voterCount;
+    document.getElementById("dashParticipation").textContent=voterCount>0?"100%":"0%";
+
+    const sorted=[...candidates].sort((a,b)=>(b.votes||0)-(a.votes||0));
+    const container=document.getElementById("dashboardResults");
+
+    if(!sorted.length){
+        container.innerHTML='<p style="color:#718096">Belum ada paslon.</p>';
+        return;
+    }
+
+    container.innerHTML=sorted.slice(0,5).map((c,i)=>{
+        const count=Number(c.votes||0);
+        const pct=total?((count/total)*100).toFixed(1):0;
+        return `
+        <div style="margin-bottom:17px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <div>
+                    <strong style="color:#123b68">#${i+1} PASLON ${esc(c.number)}</strong>
+                    <div style="color:#718096;font-size:11px;margin-top:3px">${esc(c.ketua)} & ${esc(c.wakil)}</div>
+                </div>
+                <strong>${count}</strong>
+            </div>
+            <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+        </div>`;
+    }).join("");
+}
+
+function renderAdminCandidates(){
+    const container=document.getElementById("candidateAdminContainer");
+
+    if(!candidates.length){
+        container.innerHTML=`
+        <div class="panel" style="grid-column:1/-1;text-align:center">
+            <h3 style="color:#123b68">Belum ada pasangan calon</h3>
+            <p style="color:#718096;margin-top:7px">Klik "Tambah Paslon" untuk memasukkan calon.</p>
+        </div>`;
+        return;
+    }
+
+    container.innerHTML=candidates.map(c=>`
+        <div class="candidate-card">
+            <div class="candidate-header">
+                <div class="nomor">${esc(c.number)}</div>
+                <h3>PASANGAN CALON</h3>
+            </div>
+            <div class="candidate-body">
+                <div class="label-small">Calon Ketua OSIS</div>
+                <div class="candidate-name">${esc(c.ketua)}</div>
+                <div class="amp">&</div>
+                <div class="label-small">Calon Wakil Ketua OSIS</div>
+                <div class="candidate-name">${esc(c.wakil)}</div>
+
+                <div class="candidate-info"><strong>VISI</strong><p>${esc(c.visi)}</p></div>
+                <div class="candidate-info"><strong>MISI</strong><p>${(c.misi||[]).map(x=>"• "+esc(x)).join("<br>")}</p></div>
+                <div class="candidate-info"><strong>PROGRAM UNGGULAN</strong><p>${esc(c.program)}</p></div>
+
+                <div class="card-actions">
+                    <button class="btn btn-secondary" onclick="editCandidate('${c.id}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteCandidate('${c.id}')">Hapus</button>
+                </div>
+            </div>
+        </div>
+    `).join("");
+}
+
+function openCandidateModal(){
+    if(!adminLogged){
+        alert("Silakan login admin terlebih dahulu sebelum mengelola paslon.");
+        showPage("admin");
+        return;
+    }
+    document.getElementById("candidateModalTitle").textContent="Tambah Pasangan Calon";
+    ["editCandidateId","candidateNumber","candidateKetua","candidateWakil","candidateVisi","candidateMisi","candidateProgram"]
+        .forEach(id=>document.getElementById(id).value="");
+    document.getElementById("candidateModal").classList.add("show");
+}
+
+function closeCandidateModal(){
+    document.getElementById("candidateModal").classList.remove("show");
+}
+
+async function saveCandidate(){
+    if(!adminLogged){alert("Login admin terlebih dahulu.");return;}
+
+    const editId=document.getElementById("editCandidateId").value;
+    const number=document.getElementById("candidateNumber").value.trim();
+    const ketua=document.getElementById("candidateKetua").value.trim();
+    const wakil=document.getElementById("candidateWakil").value.trim();
+    const visi=document.getElementById("candidateVisi").value.trim();
+    const misiText=document.getElementById("candidateMisi").value.trim();
+    const program=document.getElementById("candidateProgram").value.trim();
+
+    if(!number||!ketua||!wakil||!visi||!misiText||!program){
+        alert("Semua data paslon harus diisi.");
+        return;
+    }
+
+    if(candidates.some(c=>String(c.number)===number && c.id!==editId)){
+        alert("Nomor paslon tersebut sudah digunakan.");
+        return;
+    }
+
+    const data={number,ketua,wakil,visi,
+        misi:misiText.split(";").map(x=>x.trim()).filter(Boolean),
+        program
+    };
+
+    try{
+        if(editId){
+            await db.collection("candidates").doc(editId).update(data);
+        }else{
+            await db.collection("candidates").add({
+                ...data,
+                votes:0,
+                createdAt:firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        closeCandidateModal();
+        alert("Data pasangan calon berhasil disimpan ke Firebase.");
+    }catch(error){
+        console.error(error);
+        alert("Gagal menyimpan paslon ke Firebase: "+error.message);
+    }
+}
+
+function editCandidate(id){
+    if(!adminLogged){alert("Login admin terlebih dahulu.");return;}
+    const c=candidates.find(x=>x.id===id);
+    if(!c)return;
+
+    document.getElementById("candidateModalTitle").textContent="Edit Pasangan Calon";
+    document.getElementById("editCandidateId").value=c.id;
+    document.getElementById("candidateNumber").value=c.number||"";
+    document.getElementById("candidateKetua").value=c.ketua||"";
+    document.getElementById("candidateWakil").value=c.wakil||"";
+    document.getElementById("candidateVisi").value=c.visi||"";
+    document.getElementById("candidateMisi").value=(c.misi||[]).join("; ");
+    document.getElementById("candidateProgram").value=c.program||"";
+    document.getElementById("candidateModal").classList.add("show");
+}
+
+async function deleteCandidate(id){
+    if(!adminLogged){alert("Login admin terlebih dahulu.");return;}
+    const c=candidates.find(x=>x.id===id);
+    if(!c)return;
+    if(!confirm(`Hapus PASLON ${c.number}?`))return;
+
+    try{
+        await db.collection("candidates").doc(id).delete();
+        alert("Paslon berhasil dihapus.");
+    }catch(error){
+        console.error(error);
+        alert("Gagal menghapus paslon: "+error.message);
+    }
+}
+
+function checkVoter(){
+    const name=document.getElementById("voterName").value.trim();
+    const nis=document.getElementById("voterNis").value.trim();
+
+    if(!name||!nis){alert("Nama dan NIS harus diisi.");return;}
+    if(voters.some(v=>String(v.id)===nis)){alert("NIS ini sudah menggunakan hak suara.");return;}
+    if(!candidates.length){alert("Belum ada pasangan calon.");return;}
+
+    currentVoter={name,nis};
+    document.getElementById("votingArea").style.display="block";
+    renderVoting();
+    document.getElementById("votingArea").scrollIntoView({behavior:"smooth"});
+}
+
+function renderVoting(){
+    const container=document.getElementById("votingContainer");
+    if(!container)return;
+
+    if(!candidates.length){
+        container.innerHTML='<p style="color:#718096">Belum ada pasangan calon.</p>';
+        return;
+    }
+
+    container.innerHTML=candidates.map(c=>`
+        <div class="vote-card">
+            <div class="vote-head">
+                <div class="nomor">${esc(c.number)}</div>
+                <h3>PASANGAN CALON</h3>
+            </div>
+            <div class="vote-body">
+                <div class="label-small">CALON KETUA</div>
+                <h3>${esc(c.ketua)}</h3>
+                <div class="amp">&</div>
+                <div class="label-small">CALON WAKIL</div>
+                <div class="wakil">${esc(c.wakil)}</div>
+                <button class="vote-btn" onclick="openVoteModal('${c.id}')">PILIH PASLON ${esc(c.number)}</button>
+            </div>
+        </div>
+    `).join("");
+}
+
+function openVoteModal(id){
+    if(!currentVoter){alert("Masukkan identitas pemilih terlebih dahulu.");return;}
+    selectedCandidate=candidates.find(c=>c.id===id);
+    if(!selectedCandidate)return;
+
+    document.getElementById("confirmPaslon").innerHTML=
+        `PASLON ${esc(selectedCandidate.number)}<br>
+        <span style="font-size:14px;color:#718096;font-weight:600">
+        ${esc(selectedCandidate.ketua)} & ${esc(selectedCandidate.wakil)}
+        </span>`;
+    document.getElementById("voteModal").classList.add("show");
+}
+
+function closeVoteModal(){
+    document.getElementById("voteModal").classList.remove("show");
+}
+
+async function submitVote(){
+    if(!currentVoter||!selectedCandidate)return;
+
+    const nis=currentVoter.nis;
+    const candidateId=selectedCandidate.id;
+    const voterRef=db.collection("voters").doc(nis);
+    const candidateRef=db.collection("candidates").doc(candidateId);
+
+    try{
+        await db.runTransaction(async transaction=>{
+            const voterSnap=await transaction.get(voterRef);
+            const candidateSnap=await transaction.get(candidateRef);
+
+            if(voterSnap.exists){
+                throw new Error("NIS ini sudah menggunakan hak suara.");
+            }
+            if(!candidateSnap.exists){
+                throw new Error("Paslon sudah tidak tersedia.");
+            }
+
+            const oldVotes=Number(candidateSnap.data().votes||0);
+
+            transaction.set(voterRef,{
+                name:currentVoter.name,
+                nis:nis,
+                candidateId:candidateId,
+                candidateNumber:selectedCandidate.number,
+                candidateKetua:selectedCandidate.ketua,
+                candidateWakil:selectedCandidate.wakil,
+                createdAt:firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            transaction.update(candidateRef,{
+                votes:oldVotes+1
+            });
+        });
+
+        closeVoteModal();
+        alert("✓ VOTING BERHASIL!\n\nSuara telah tersimpan di Firebase.\nTerima kasih telah menggunakan hak suara Anda.");
+
+        document.getElementById("voterName").value="";
+        document.getElementById("voterNis").value="";
+        document.getElementById("votingArea").style.display="none";
+        currentVoter=null;
+        selectedCandidate=null;
+    }catch(error){
+        console.error(error);
+        alert("Voting gagal: "+error.message);
+    }
+}
+
+function renderResults(){
+    const total=candidates.reduce((s,c)=>s+Number(c.votes||0),0);
+    const voterCount=voters.length;
+
+    document.getElementById("resultTotal").textContent=total;
+    document.getElementById("resultCandidates").textContent=candidates.length;
+    document.getElementById("resultParticipation").textContent=voterCount;
+
+    const highest=candidates.reduce((m,c)=>Math.max(m,Number(c.votes||0)),0);
+    document.getElementById("resultHighest").textContent=highest;
+
+    const sorted=[...candidates].sort((a,b)=>(b.votes||0)-(a.votes||0));
+    const container=document.getElementById("resultContainer");
+
+    if(!sorted.length){
+        container.innerHTML='<div class="panel" style="text-align:center">Belum ada data paslon.</div>';
+        return;
+    }
+
+    container.innerHTML=sorted.map((c,i)=>{
+        const count=Number(c.votes||0);
+        const pct=total?((count/total)*100).toFixed(1):0;
+        return `
+        <div class="result-card ${i===0&&total>0?"winner":""}">
+            <div class="result-top">
+                <div>
+                    <span class="rank">PERINGKAT ${i+1}</span>
+                    <div class="result-title">PASLON ${esc(c.number)}</div>
+                    <div class="result-names">${esc(c.ketua)} & ${esc(c.wakil)}</div>
+                </div>
+                <div class="result-score"><strong>${count}</strong><span>suara</span></div>
+            </div>
+            <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+            <div style="margin-top:7px;font-size:11px;color:#718096">${pct}% dari total suara</div>
+        </div>`;
+    }).join("");
+}
+
+function renderVoters(){
+    const tbody=document.getElementById("voterTable");
+
+    if(!voters.length){
+        tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px;color:#718096">Belum ada pemilih yang melakukan voting.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML=voters.map((v,i)=>`
+        <tr>
+            <td>${i+1}</td>
+            <td>${esc(v.name)}</td>
+            <td>${esc(v.nis)}</td>
+            <td>Paslon ${esc(v.candidateNumber)} — ${esc(v.candidateKetua)} & ${esc(v.candidateWakil)}</td>
+            <td>${formatTimestamp(v.createdAt)}</td>
+        </tr>
+    `).join("");
+}
+
+function formatTimestamp(ts){
+    if(!ts)return "Memproses...";
+    try{return ts.toDate().toLocaleString("id-ID");}
+    catch(e){return String(ts);}
+}
+
+function adminLogin(){
+    const password=document.getElementById("adminPassword").value;
+
+    // Catatan: ini hanya pengaman antarmuka. Keamanan sebenarnya
+    // harus memakai Firebase Authentication + Firestore Security Rules.
+    if(password==="admin123"){
+        adminLogged=true;
+        document.getElementById("adminStatus").innerHTML=
+            '<div style="background:#dcfce7;color:#166534;padding:10px;border-radius:9px;font-size:11px;font-weight:800">✓ Admin berhasil login.</div>';
+    }else{
+        adminLogged=false;
+        document.getElementById("adminStatus").innerHTML=
+            '<div style="background:#fee2e2;color:#b42318;padding:10px;border-radius:9px;font-size:11px;font-weight:800">Password admin salah.</div>';
+    }
+}
+
+async function resetAllData(){
+    if(!adminLogged){alert("Silakan login sebagai admin terlebih dahulu.");return;}
+    if(!confirm("Semua suara dan data pemilih akan dihapus dari Firebase. Lanjutkan?"))return;
+
+    try{
+        const voterSnap=await db.collection("voters").get();
+        let batch=db.batch();
+        let count=0;
+
+        for(const doc of voterSnap.docs){
+            batch.delete(doc.ref);
+            count++;
+            if(count===450){
+                await batch.commit();
+                batch=db.batch();
+                count=0;
+            }
+        }
+
+        const candidateSnap=await db.collection("candidates").get();
+        for(const doc of candidateSnap.docs){
+            batch.update(doc.ref,{votes:0});
+            count++;
+            if(count===450){
+                await batch.commit();
+                batch=db.batch();
+                count=0;
+            }
+        }
+
+        if(count>0) await batch.commit();
+
+        alert("✓ Semua suara dan data pemilih berhasil direset di Firebase.");
+    }catch(error){
+        console.error(error);
+        alert("Gagal reset Firebase: "+error.message);
+    }
+}
+
+function exportCSV(){
+    const total=candidates.reduce((s,c)=>s+Number(c.votes||0),0);
+    const rows=[["Nomor Paslon","Ketua","Wakil","Jumlah Suara","Persentase"]];
+
+    candidates.forEach(c=>{
+        const count=Number(c.votes||0);
+        rows.push([c.number,c.ketua,c.wakil,count,total?((count/total)*100).toFixed(1)+"%":"0%"]);
+    });
+
+    downloadCSV(rows,"hasil-pemilihan-osis.csv");
+}
+
+function exportVotersCSV(){
+    const rows=[["Nama","NIS","Paslon","Ketua","Wakil","Waktu Voting"]];
+    voters.forEach(v=>{
+        rows.push([v.name,v.nis,v.candidateNumber,v.candidateKetua,v.candidateWakil,formatTimestamp(v.createdAt)]);
+    });
+    downloadCSV(rows,"data-pemilih-osis.csv");
+}
+
+function downloadCSV(rows,filename){
+    const csv=rows.map(row=>row.map(cell=>`"${String(cell??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    URL.revokeObjectURL(url);
+}
+
+function esc(text){
+    return String(text??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+
+async function startFirebase(){
+    try{
+        await seedCandidatesIfEmpty();
+        listenCandidates();
+        listenVoters();
+    }catch(error){
+        console.error(error);
+        alert("Firebase belum siap. Pastikan Firestore Database sudah dibuat pada project 'votingsma'.\n\nDetail: "+error.message);
+    }
+}
+
+startFirebase();
+</script>
+</body>
+</html>
