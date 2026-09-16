@@ -1057,9 +1057,22 @@ async function startFirebase(){
 
 // Pastikan fungsi tombol HTML tetap dapat dipanggil di HP/browser modern
 window.showPage=showPage; window.toggleSidebar=toggleSidebar; window.openCandidateModal=openCandidateModal;
+window.saveCandidate=saveCandidate;
 window.closeCandidateModal=closeCandidateModal; window.editCandidate=editCandidate; window.deleteCandidate=deleteCandidate;
 window.checkVoter=checkVoter; window.openVoteModal=openVoteModal; window.closeVoteModal=closeVoteModal; window.submitVote=submitVote;
 window.adminLogin=adminLogin; window.resetAllData=resetAllData; window.exportCSV=exportCSV; window.exportVotersCSV=exportVotersCSV;
+
+document.addEventListener("DOMContentLoaded",()=>{
+    const saveBtn=document.getElementById("saveCandidateBtn");
+    if(saveBtn){
+        saveBtn.onclick=null;
+        saveBtn.addEventListener("click",(e)=>{
+            e.preventDefault();
+            e.stopPropagation();
+            saveCandidate();
+        });
+    }
+});
 
 startFirebase();
 </script>
