@@ -121,6 +121,7 @@ button,input,textarea{font:inherit}
 .quick-btn:hover{border-color:#a9dddd;background:#effafa}
 
 .btn{
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;
     border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font-size:12px;font-weight:800;
     transition:.2s
 }
@@ -195,9 +196,9 @@ th{background:#f7fafc;color:var(--navy);font-size:10px;letter-spacing:.6px}td{co
     align-items:center;justify-content:center;padding:20px
 }
 .modal.show{display:flex}
-.modal-box{background:#fff;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;border-radius:20px;padding:29px}
+.modal-box{background:#fff;position:relative;z-index:1001;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;border-radius:20px;padding:29px}
 .modal-box h2{color:var(--navy);margin-bottom:20px}
-.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.modal-actions{display:flex;position:relative;z-index:1002;justify-content:flex-end;gap:9px;margin-top:18px}
 
 .mobile-menu{display:none;border:0;background:transparent;font-size:23px;cursor:pointer;color:var(--navy)}
 
@@ -471,7 +472,7 @@ th{background:#f7fafc;color:var(--navy);font-size:10px;letter-spacing:.6px}td{co
 
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeCandidateModal()">Batal</button>
-            <button class="btn btn-primary" onclick="saveCandidate()">Simpan Paslon</button>
+            <button type="button" class="btn btn-primary" id="saveCandidateBtn" onclick="saveCandidate()">Simpan Paslon</button>
         </div>
     </div>
 </div>
@@ -1052,6 +1053,13 @@ async function startFirebase(){
         alert("Firebase belum siap. Pastikan Firestore Database sudah dibuat pada project 'votingsma'.\n\nDetail: "+error.message);
     }
 }
+
+
+// Pastikan fungsi tombol HTML tetap dapat dipanggil di HP/browser modern
+window.showPage=showPage; window.toggleSidebar=toggleSidebar; window.openCandidateModal=openCandidateModal;
+window.closeCandidateModal=closeCandidateModal; window.editCandidate=editCandidate; window.deleteCandidate=deleteCandidate;
+window.checkVoter=checkVoter; window.openVoteModal=openVoteModal; window.closeVoteModal=closeVoteModal; window.submitVote=submitVote;
+window.adminLogin=adminLogin; window.resetAllData=resetAllData; window.exportCSV=exportCSV; window.exportVotersCSV=exportVotersCSV;
 
 startFirebase();
 </script>
